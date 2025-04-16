@@ -1,6 +1,6 @@
 const db = require("../connection")
 const format = require(`pg-format`)
-const { convertTimestampToDate } = require('./utils')
+const { convertTimestampToDate, createRef } = require('./utils')
 
 const seed = ({ topicData, userData, articleData, commentData }) => {
   return db
@@ -97,10 +97,32 @@ const formattedArticleData = convertedArticles.map((convertedArticle) => {
   ]
 })
 const insertArticleQuery = format(
-  `INSERT INTO articles(title, topic, author, body, created_at, votes, article_img_url) VALUES %L`,
+  `INSERT INTO articles(title, topic, author, body, created_at, votes, article_img_url) VALUES %L RETURNING *`,
   formattedArticleData
 );
 return db.query(insertArticleQuery)
-});
+})
+.then((result) => {
+const commentsReferenceObject = createRef(result.rows);
+const convertedComments = commentData.map(convertTimestampToDate);
+const formattedCommentData = convertedComments.map((convertedComment) => {
+  return [commentsReferenceObject[convertedComment.article_title],
+    convertedComment.body,
+    convertedComment.votes,
+    convertedComment.author,
+    convertedComment.created_at
+  ]
+})
+console.log(formattedCommentData)
+const insertCommentQuery = format(
+  `INSERT INTO comments(article_id, body, votes, author, created_at) VALUES %L`, 
+  formattedCommentData
+)
+return db.query(insertCommentQuery)
+})
+.then(() => {
+  console.log("seeding complete")
+})
+;
 }
 module.exports = seed;
