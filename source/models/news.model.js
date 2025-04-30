@@ -6,4 +6,12 @@ const selectEndpoints = (req, res, next) => {
     return Promise.resolve(endpointsJson)
 }
 
-module.exports = { selectEndpoints }
+const selectTopics = (req, res, next) => {
+return db.query('SELECT * FROM topics')
+.then((result) => {
+    const topics = result.rows
+    return topics
+})
+}
+
+module.exports = { selectEndpoints, selectTopics }
