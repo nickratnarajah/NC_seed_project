@@ -1,4 +1,4 @@
-const { selectEndpoints, selectTopics } = require('../models/news.model');
+const { selectEndpoints, selectTopics, selectArticles, selectArticleById } = require('../models/news.model');
 
 getEndpoints = (req, res, next) => {
     return selectEndpoints().then((endpoints) => {
@@ -14,4 +14,23 @@ getTopics = (req, res, next) => {
     .catch(next)
 }
 
-module.exports = { getEndpoints, getTopics }
+getArticles = (req, res, next) => {
+    return selectArticles().then((articles) => {
+        res.status(200).send({ articles })
+    })
+    .catch(next)
+}
+
+getArticleById = (req, res, next) => {
+    const articleId = req.params.article_id
+    return selectArticleById(articleId)
+    .then((article) => {
+        if (!article) {
+            return Promise.reject({ status: 404, msg: "Article not found"})
+        }
+        res.status(200).send({ article })
+    })
+    .catch(next)
+}
+
+module.exports = { getEndpoints, getTopics, getArticles, getArticleById }
