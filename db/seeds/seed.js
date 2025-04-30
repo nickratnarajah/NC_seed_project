@@ -113,7 +113,6 @@ const formattedCommentData = convertedComments.map((convertedComment) => {
     convertedComment.created_at
   ]
 })
-console.log(formattedCommentData)
 const insertCommentQuery = format(
   `INSERT INTO comments(article_id, body, votes, author, created_at) VALUES %L`, 
   formattedCommentData
