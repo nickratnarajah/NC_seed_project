@@ -19,3 +19,34 @@ describe("GET /api", () => {
       });
   });
 });
+describe("GET /api/topics", () => {
+  test("200: responds with an array of topic objects", () => {
+    return request(app)
+    .get("/api/topics")
+    .expect(200)
+    .then(({body: { topics }}) => {
+      expect(Array.isArray(topics)).toBe(true)
+    })
+  })
+  test("200: each object has slug and description properties", () => {
+    return request(app)
+    .get("/api/topics")
+    .expect(200)
+    .then(({body: { topics }}) => {
+      topics.forEach((topic) => {
+        expect(topic).toHaveProperty("slug");
+        expect(topic).toHaveProperty("description");
+        expect(typeof topic.slug).toBe("string");
+        expect(typeof topic.description).toBe("string");
+      })
+    })
+  })
+  test("404: responds with an error message if the endpoint is not found", () => {
+    return request(app)
+    .get("/api/topiccs")
+    .expect(404)
+    .then((body) => {
+      expect(body.body.msg).toBe("Path not found")
+    })
+  })
+})
