@@ -350,3 +350,41 @@ describe("GET /api/articles", () => {
     })
   })
  })
+
+ describe("GET /api/users", () => {
+  test("200: responds with an array of user objects", () => {
+    return request(app)
+    .get("/api/users")
+    .expect(200)
+    .then(({body: { users }}) => {
+      expect(Array.isArray(users)).toBe(true)
+      users.forEach((user) => {
+        expect(user).toHaveProperty("username");
+        expect(user).toHaveProperty("avatar_url");
+        expect(user).toHaveProperty("name");
+        expect(typeof user.username).toBe("string");
+        expect(typeof user.avatar_url).toBe("string");
+        expect(typeof user.name).toBe("string");
+      })
+    })
+  })
+  test("404: responds with error message if endpoint not found", () => {
+    return request(app)
+    .get("/api/user")
+    .expect(404)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Path not found")
+    })
+  })
+  test("200: responds with a correct code and a message of no users yet if users table empty", () => {
+    return db.query("DELETE FROM users")
+    .then(() => {
+      return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({body: { msg }}) => {
+        expect(msg).toBe("No users yet")
+      })
+    })
+  })
+ })

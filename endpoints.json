@@ -85,5 +85,15 @@
   },
   "DELETE /api/comments/:comment_id": {
     "description": "Deletes the comment with the given comment_id and returns a 204 status"
+  },
+  "GET /api/users": {
+    "description": "responds with an array of user objects, each with the correct properties",
+    "exampleResponse": [
+      {
+        "username": "butter_bridge",
+        "name": "jonny", 
+        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }
+    ]
   }
 }

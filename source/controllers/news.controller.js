@@ -1,4 +1,4 @@
-const { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists } = require('../models/news.model');
+const { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers } = require('../models/news.model');
 const { checkNewVotesValid } = require('../errors/news.errors')
 
 getEndpoints = (req, res, next) => {
@@ -83,4 +83,14 @@ deleteCommentById = (req, res, next) => {
     })
 }
 
-module.exports = { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment, patchArticleVotes, deleteCommentById }
+getAllUsers = (req, res, next) => {
+    return selectAllUsers()
+    .then((users) => {
+        if (users.length === 0) {
+            return res.status(200).send({ msg: "No users yet" })
+        }
+        res.status(200).send({ users })
+    })
+}
+
+module.exports = { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment, patchArticleVotes, deleteCommentById, getAllUsers }

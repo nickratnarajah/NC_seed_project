@@ -1,7 +1,7 @@
 require('dotenv').config();
 require('../db/connection');
 const express = require('express');
-const { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment, patchArticleVotes, deleteCommentById } = require('./controllers/news.controller');
+const { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment, patchArticleVotes, deleteCommentById, getAllUsers } = require('./controllers/news.controller');
 const { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound } = require('./errors/news.errors');
 
 const app = express();
@@ -13,6 +13,7 @@ app.get('/api/topics', getTopics)
 app.get('/api/articles', getArticles)
 app.get('/api/articles/:article_id', getArticleById)
 app.get('/api/articles/:article_id/comments', getArticleComments)
+app.get('/api/users', getAllUsers)
 
 //Post Requests
 app.post('/api/articles/:article_id/comments', postNewComment)
