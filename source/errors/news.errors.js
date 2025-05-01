@@ -36,6 +36,7 @@ const handleCustomErrors = (err, req, res, next) => {
   };
   
   const checkNewVotesValid = (newVotes) => {
+    console.log(newVotes, "<<< in checkValid")
     if (!newVotes.inc_votes) {
       return Promise.reject({ status: 400, msg: "Invalid request" });
     }
@@ -45,5 +46,27 @@ const handleCustomErrors = (err, req, res, next) => {
     return Promise.resolve()
   }
 
+  const checkValidParams = (reqQuery) => {
+    if (!reqQuery) {
+      return Promise.resolve()
+    }
+      else {const { sort_by, order } = reqQuery
+    const validParams = ["sort_by", "order"]
 
-  module.exports = { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound, checkNewVotesValid } 
+    const invalidParams = Object.keys(reqQuery).filter(
+      (key) => !validParams.includes(key)
+    );
+
+    if (invalidParams.length > 0) {
+      return Promise.reject({
+        status: 400,
+        msg: "Invalid sort query"});
+    }
+
+    // Otherwise, resolve
+    return Promise.resolve();
+  }
+};
+
+
+  module.exports = { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound, checkNewVotesValid, checkValidParams } 

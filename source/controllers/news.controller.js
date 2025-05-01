@@ -1,5 +1,5 @@
 const { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers } = require('../models/news.model');
-const { checkNewVotesValid } = require('../errors/news.errors')
+const { checkNewVotesValid, checkValidParams } = require('../errors/news.errors')
 
 getEndpoints = (req, res, next) => {
     return selectEndpoints().then((endpoints) => {
@@ -16,8 +16,12 @@ getTopics = (req, res, next) => {
 }
 
 getArticles = (req, res, next) => {
-    return selectArticles().then((articles) => {
+    const sortBy = req.query.sort_by
+    const order = req.query.order
+    return checkValidParams(req.query)
+    .then(() => {return selectArticles(sortBy, order).then((articles) => {
         res.status(200).send({ articles })
+    })
     })
     .catch(next)
 }
@@ -86,9 +90,6 @@ deleteCommentById = (req, res, next) => {
 getAllUsers = (req, res, next) => {
     return selectAllUsers()
     .then((users) => {
-        if (users.length === 0) {
-            return res.status(200).send({ msg: "No users yet" })
-        }
         res.status(200).send({ users })
     })
 }
