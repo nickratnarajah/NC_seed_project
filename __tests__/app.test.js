@@ -164,3 +164,60 @@ describe("GET /api/articles", () => {
     })
   })
  })
+
+ describe("GET /api/articles/:article_id/comments", () => {
+  test("200 responds with an array of comments for the given article_id", () => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then(({body: { comments }}) => {
+      comments.forEach((comment) => {
+        expect(comment).toHaveProperty("author");
+        expect(comment).toHaveProperty("comment_id");
+        expect(comment).toHaveProperty("article_id");
+        expect(comment).toHaveProperty("body");
+        expect(comment).toHaveProperty("created_at");
+        expect(comment).toHaveProperty("votes");
+        expect(typeof comment.author).toBe("string");
+        expect(typeof comment.comment_id).toBe("number");
+        expect(typeof comment.article_id).toBe("number");
+        expect(typeof comment.body).toBe("string");
+        expect(typeof comment.created_at).toBe("string");
+        expect(typeof comment.votes).toBe("number");
+      })
+    })
+  })
+  test("200: responds with comments sorted by date in descending order", () => {
+    return request(app)
+    .get("/api/articles/1/comments")
+    .expect(200)
+    .then(({body: { comments }}) => {
+      const sortedComments = [...comments].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+      expect(comments).toEqual(sortedComments);
+    })
+  })
+  test("400: responds with error message if no article_id", () => {
+    return request(app)
+    .get("/api/articles/comments")
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Invalid input syntax")
+    })
+  })
+  test("404: responds with error message if out of range article_id", () => {
+    return request(app)
+    .get("/api/articles/1000/comments")
+    .expect(404)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Article not found")
+    })
+  })
+  test("200: responds with no comments yet message if article exists but no comments", () => {
+    return request(app)
+    .get("/api/articles/2/comments")
+    .expect(200)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("No comments yet")
+    })
+  })
+ })

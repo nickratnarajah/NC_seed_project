@@ -38,4 +38,24 @@ const selectArticleById = (articleId) => {
         })
 }
 
-module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById }
+const selectArticleComments = (articleId) => {
+    return db.query(`SELECT * FROM comments
+        WHERE article_id = $1
+        ORDER BY comments.created_at DESC`, [articleId])
+        .then((result) => {
+            const comments = result.rows
+            return comments
+        })
+
+}
+
+const checkArticleExists = (articleId) => {
+    return db.query(`SELECT * FROM articles WHERE article_id = $1`, [articleId])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Article not found" });
+      }
+    })
+}
+
+module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists }
