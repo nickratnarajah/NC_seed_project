@@ -8,12 +8,18 @@ const handleCustomErrors = (err, req, res, next) => {
   
   const handlePsqlErrors = (err, req, res, next) => {
     const psqlErrorCodes = {
-      '22P02': 'Invalid input syntax',
+      '22P02': 'Invalid request',
       '23503': 'Foreign key violation',
       '42703': 'Column does not exist'
     };
   
     if (psqlErrorCodes[err.code]) {
+      if (err.constraint === 'comments_article_id_fkey') {
+        return res.status(404).send({ msg: 'Article not found' })
+      }
+      if (err.constraint === 'comments_author_fkey') {
+        return res.status(400).send({ msg: "invalid username" })
+      }
       res.status(400).send({ msg: psqlErrorCodes[err.code] });
     } else {
       next(err);

@@ -58,4 +58,14 @@ const checkArticleExists = (articleId) => {
     })
 }
 
-module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists }
+const insertNewComment = (articleId, newComment) => {
+    return db.query(`INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING author, body, comment_id, created_at`, [newComment.username, newComment.body, articleId]
+    ).then((result) => {
+        const comment = result.rows[0]
+        return comment
+    })
+}
+
+
+
+module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment }

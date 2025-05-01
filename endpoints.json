@@ -51,5 +51,20 @@
         }
       ]
     }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Request body accepts an object with username and body, returns with the posted comment",
+    "exampleRequestBody": {
+      "username": "butter_bridge",
+      "body": "test database comment for task 6"
+    },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 7,
+        "author": "butter_bridge",
+        "body": "test database comment for task 6",
+        "created_at": "2025-05-01T10:30:00.000Z"
+      }
+    }
   }
 }
