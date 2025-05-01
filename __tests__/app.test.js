@@ -89,7 +89,7 @@ describe("GET /api/articles/:article_id", () => {
     .get("/api/articles/a")
     .expect(400)
     .then(({body: { msg }}) => {
-      expect(msg).toBe("Invalid input syntax")
+      expect(msg).toBe("Invalid request")
     })
   })
   //article id is out of range
@@ -201,7 +201,7 @@ describe("GET /api/articles", () => {
     .get("/api/articles/comments")
     .expect(400)
     .then(({body: { msg }}) => {
-      expect(msg).toBe("Invalid input syntax")
+      expect(msg).toBe("Invalid request")
     })
   })
   test("404: responds with error message if out of range article_id", () => {
@@ -220,4 +220,56 @@ describe("GET /api/articles", () => {
       expect(msg).toBe("No comments yet")
     })
   })
+ })
+
+ describe("POST /api/articles/:article_id/comments", () => {
+  test("201: responds with the posted comment", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "test database comment for task 6"
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(201)
+    .then(({body: { comment }}) => {
+      expect(comment).toHaveProperty("author");
+      expect(comment).toHaveProperty("comment_id");
+      expect(comment).toHaveProperty("body");
+      expect(comment).toHaveProperty("created_at");
+      expect(typeof comment.comment_id).toBe("number");
+      expect(typeof comment.author).toBe("string");
+      expect(typeof comment.body).toBe("string");
+      expect(typeof comment.created_at).toBe("string");
+    })
+  })
+  //error handling for invalid username
+  test("400: responds with error message if invalid username", () => {
+    const newComment = {
+      username: "invalid_user",
+      body: "this comment should not be posted"
+    }
+    return request(app)
+    .post("/api/articles/1/comments")
+    .send(newComment)
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("invalid username")
+    })
+  })
+  //error handling for invalid article_id
+  test("404: responds with error message if invalid article_id", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "this comment should not be posted"
+    }
+    return request(app)
+    .post("/api/articles/1000/comments")
+    .send(newComment)
+    .expect(404)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Article not found")
+    })
+  })
+  //manage SQL injection risk
  })

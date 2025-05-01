@@ -1,4 +1,4 @@
-const { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists } = require('../models/news.model');
+const { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment } = require('../models/news.model');
 
 getEndpoints = (req, res, next) => {
     return selectEndpoints().then((endpoints) => {
@@ -47,4 +47,13 @@ getArticleComments = (req, res, next) => {
     })
 }
 
-module.exports = { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments }
+postNewComment = (req, res, next) => {
+    const articleId = req.params.article_id
+    const newComment = req.body
+    return insertNewComment(articleId, newComment)
+    .then((comment) => {
+        res.status(201).send({ comment })
+    })
+}
+
+module.exports = { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment }
