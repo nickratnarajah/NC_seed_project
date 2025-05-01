@@ -13,7 +13,7 @@ const handleCustomErrors = (err, req, res, next) => {
       '42703': 'Column does not exist'
     };
   
-    if (psqlErrorCodes[err.code]) {console.log(err)
+    if (psqlErrorCodes[err.code]) {
       res.status(400).send({ msg: psqlErrorCodes[err.code] });
     } else {
       next(err);
