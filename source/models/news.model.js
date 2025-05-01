@@ -100,4 +100,14 @@ const checkCommentExists = (commentId) => {
     })  
 }
 
-module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists }
+const selectAllUsers = () => {
+    return db.query(
+        `SELECT * FROM users`
+    )
+    .then((result) => {
+        const users = result.rows
+        return users
+    })
+}
+
+module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers }
