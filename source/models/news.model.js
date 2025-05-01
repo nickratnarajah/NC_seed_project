@@ -14,15 +14,25 @@ return db.query('SELECT * FROM topics')
 })
 }
 
-const selectArticles = () => {
-    return db.query(`SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url,
-        COUNT (comments.comment_id) ::int AS comment_count
-        FROM articles
-        LEFT JOIN comments
-        ON articles.article_id = comments.article_id
-        GROUP BY 
-        articles.article_id
-        ORDER BY articles.created_at DESC`)
+const selectArticles = (sortBy, order) => {
+    let baseString = "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT (comments.comment_id) ::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id"
+    let defaultSort = "ORDER BY articles.created_at"
+    let defaultOrder = "DESC"
+    
+    const allowedSortBy = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'comment_count']
+    const allowedOrder = ['asc', 'desc']
+   
+    if (sortBy !== undefined && !allowedSortBy.includes(sortBy) || order !== undefined && !allowedOrder.includes(order)) {
+        return Promise.reject({ status: 400, msg: "Invalid sort query" })
+    } else if (sortBy !== undefined && allowedSortBy.includes(sortBy)){
+        defaultSort = `ORDER BY ${sortBy}`
+    } if (order !== undefined && allowedOrder.includes(order)) {
+        defaultOrder = order.toUpperCase()
+    }
+    const queryString = `${baseString} ${defaultSort} ${defaultOrder}`
+
+
+        return db.query(queryString)
     .then((result) => {
         const articles = result.rows
         return articles
@@ -86,9 +96,6 @@ const deleteComment = (commentId) => {
         WHERE comment_id = $1`,
         [commentId]
     )
-    .then(() => {
-        Promise.resolve()
-    })
 }
 
 const checkCommentExists = (commentId) => {

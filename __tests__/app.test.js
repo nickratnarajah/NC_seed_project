@@ -376,15 +376,58 @@ describe("GET /api/articles", () => {
       expect(msg).toBe("Path not found")
     })
   })
-  test("200: responds with a correct code and a message of no users yet if users table empty", () => {
+  test("200: responds with a correct code and an empty array if users table empty", () => {
     return db.query("DELETE FROM users")
     .then(() => {
       return request(app)
       .get("/api/users")
       .expect(200)
-      .then(({body: { msg }}) => {
-        expect(msg).toBe("No users yet")
+      .then(({body: { users }}) => {
+        expect(Array.isArray(users)).toBe(true)
       })
+    })
+  })
+ })
+
+ describe("GET /api/articles?sort_by=:column_name&order=:order", () => {
+  test("200: responds with articles sorted by the specified column in descending order", () => {
+    return request(app)
+    .get("/api/articles?sort_by=author")
+    .expect(200)
+    .then(({body: { articles }}) => {
+      expect(articles).toBeSortedBy("author", { descending: true })
+    })
+  })
+  test("200: responds with articles sorted by default column in ascending order", () => {
+    return request(app)
+    .get("/api/articles?order=asc")
+    .expect(200)
+    .then(({body: {articles }}) => {
+      expect(articles).toBeSortedBy("created_at", { ascending: true })
+    })
+  })
+  test("200: responds with articles sorted by the specified column in ascending order", () => {
+    return request(app)
+    .get("/api/articles?sort_by=title&order=asc")
+    .expect(200)
+    .then(({body: { articles }}) => {
+      expect(articles).toBeSortedBy("title", { ascending: true })
+    })
+  })
+  test("400: responds with error message if invalid sort_by column", () => {
+    return request(app)
+    .get("/api/articles?sort_by=;DROP%20TABLE%20articles")
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Invalid sort query")
+    })
+  })
+  test("404: responds with error message if invalid endpoint", () => {
+    return request(app)
+    .get("/api/articles?sorr_by=title&ordr=asc")
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Invalid sort query")
     })
   })
  })
