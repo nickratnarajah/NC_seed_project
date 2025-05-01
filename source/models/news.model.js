@@ -66,6 +66,18 @@ const insertNewComment = (articleId, newComment) => {
     })
 }
 
+const updateArticleVotes = (articleId, newVotes) => {
+    return db.query(
+        `UPDATE articles
+        SET votes = votes + $1
+        WHERE article_id = $2
+        RETURNING *`,
+        [newVotes.inc_votes, articleId]
+        )
+        .then((result) => {
+            const article = result.rows[0]
+            return article 
+        })
+}
 
-
-module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment }
+module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes }

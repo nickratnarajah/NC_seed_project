@@ -35,7 +35,15 @@ const handleCustomErrors = (err, req, res, next) => {
     next({ status: 404, msg: "Path not found" });
   };
   
+  const checkNewVotesValid = (newVotes) => {
+    if (!newVotes.inc_votes) {
+      return Promise.reject({ status: 400, msg: "Invalid request" });
+    }
+    if (typeof newVotes.inc_votes !== 'number') {
+      return Promise.reject({ status: 400, msg: "New Votes must be a number" })
+    }
+    return Promise.resolve()
+  }
 
 
-
-  module.exports = { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound } 
+  module.exports = { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound, checkNewVotesValid } 

@@ -1,7 +1,7 @@
 require('dotenv').config();
 require('../db/connection');
 const express = require('express');
-const { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment } = require('./controllers/news.controller');
+const { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment, patchArticleVotes } = require('./controllers/news.controller');
 const { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound } = require('./errors/news.errors');
 
 const app = express();
@@ -16,6 +16,9 @@ app.get('/api/articles/:article_id/comments', getArticleComments)
 
 //Post Requests
 app.post('/api/articles/:article_id/comments', postNewComment)
+
+//Patch Requests
+app.patch('/api/articles/:article_id', patchArticleVotes)
 
 //Error Handling
 app.all('/*splat', handlePathNotFound);
