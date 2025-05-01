@@ -80,4 +80,24 @@ const updateArticleVotes = (articleId, newVotes) => {
         })
 }
 
-module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes }
+const deleteComment = (commentId) => {
+    return db.query(
+        `DELETE FROM comments
+        WHERE comment_id = $1`,
+        [commentId]
+    )
+    .then(() => {
+        Promise.resolve()
+    })
+}
+
+const checkCommentExists = (commentId) => {
+    return db.query(`SELECT * FROM comments WHERE comment_id = $1`, [commentId])
+    .then((result) => {
+      if (result.rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "Comment not found" });
+      }
+    })  
+}
+
+module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists }

@@ -326,3 +326,27 @@ describe("GET /api/articles", () => {
     })
   })
  })
+
+ describe("DELETE /api/comments/:comment_id", () => {
+  test("204: responds with no content", () => {
+    return request(app)
+    .delete("/api/comments/1")
+    .expect(204)
+  })
+  test("404: responds with error message if comment_id does not exist", () => {
+    return request(app)
+    .delete("/api/comments/1000")
+    .expect(404)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Comment not found")
+    })
+  })
+  test("400: responds with error message if comment_id is invalid type", () => {
+    return request(app)
+    .delete("/api/comments/a")
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Invalid request")
+    })
+  })
+ })
