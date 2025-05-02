@@ -134,5 +134,16 @@
       "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
       "name": "jonny"
     }
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "Request body accepts a newVote object and returns the updated comment with the vote count changed by the number on the inc_votes property",
+    "exampleRequestBody": {
+      "inc_votes": 10
+    },
+    "exampleResponse": {
+      "author": "butter_bridge",
+      "body": "I find this existence challenging",
+      "votes": 10
+    }
   }
 }
