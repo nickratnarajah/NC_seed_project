@@ -145,5 +145,26 @@
       "body": "I find this existence challenging",
       "votes": 10
     }
+  },
+  "POST /api/articles": {
+    "description": "Request body accepts an article object and returns the newly added article with additional properties",
+    "exampleRequestBody": {
+      "author": "butter_bridge",
+      "title": "New Test Article for Task 18",
+      "body": "I think I'm starting to get the hang of this",
+      "topic": "paper",
+      "article_img_url": "https://thisisanexampleurlthatshouldnotgoanywhere.com/img.jpg"
+    },
+    "exampleResponse": {
+      "author": "butter_bridge",
+      "title": "New Test Article for Task 18",
+      "body": "I think I'm starting to get the hang of this",
+      "topic": "paper",
+      "article_img_url": "https://thisisanexampleurlthatshouldnotgoanywhere.com/img.jpg",
+      "article_id": 20,
+      "votes": 0,
+      "created_at": "2025-05-02T16:10:00.000Z",
+      "comment_count": 0
+    }
   }
 }

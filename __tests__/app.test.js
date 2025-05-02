@@ -533,5 +533,88 @@ describe("PATCH /api/comments/:comment_id", () => {
     })
   })
  })
-
+describe("POST /api/articles", () => {
+  test("201: responds with the posted article", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "New Test Article for Task 18",
+      body: "I think I'm starting to get the hang of this",
+      topic: "paper",
+      article_img_url: "https://thisisanexampleurlthatshouldnotgoanywhere.com/img.jpg"
+    }
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(201)
+    .then(({body: { article }}) => {
+      expect(article).toHaveProperty("author");
+      expect(article).toHaveProperty("title");
+      expect(article).toHaveProperty("body");
+      expect(article).toHaveProperty("topic");
+      expect(article).toHaveProperty("author");
+      expect(article).toHaveProperty("article_img_url");
+      expect(article).toHaveProperty("article_id");
+      expect(article).toHaveProperty("votes");
+      expect(article).toHaveProperty("created_at");
+      expect(article).toHaveProperty("comment_count");
+      expect(typeof article.author).toBe("string");
+      expect(typeof article.title).toBe("string");
+      expect(typeof article.body).toBe("string");
+      expect(typeof article.topic).toBe("string");
+      expect(typeof article.author).toBe("string");
+      expect(typeof article.article_img_url).toBe("string");
+      expect(typeof article.article_id).toBe("number");
+      expect(typeof article.votes).toBe("number");
+      expect(typeof article.created_at).toBe("string");
+      expect(typeof article.comment_count).toBe("number")
+    })
+  })
+  test("400: responds with error if articles object missing values", () => {
+    const newArticle = {
+      author: "butter_bridge",
+      title: "New Test Article for Task 18",
+      body: "I think I'm starting to get the hang of this",
+      article_img_url: "https://thisisanexampleurlthatshouldnotgoanywhere.com/img.jpg"
+    }
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("New article must have topic")
+    })
+  })
+  test("400: responds with error if author not in DB", () => {
+    const newArticle = {
+      author: "invalid author username",
+      title: "New Test Article for Task 18",
+      body: "I think I'm starting to get the hang of this",
+      topic: "paper",
+      article_img_url: "https://thisisanexampleurlthatshouldnotgoanywhere.com/img.jpg"
+    }
+    return request(app)
+    .post("/api/articles")
+    .send(newArticle)
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Foreign key violation")
+    })
+  })
+  test("404: responds with error if invalid request", () => {
+    const newArticle = {
+      author: "invalid author username",
+      title: "New Test Article for Task 18",
+      body: "I think I'm starting to get the hang of this",
+      topic: "paper",
+      article_img_url: "https://thisisanexampleurlthatshouldnotgoanywhere.com/img.jpg"
+    }
+    return request(app)
+    .post("/api/articless")
+    .send(newArticle)
+    .expect(404)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Path not found")
+    })
+  })
+})
 

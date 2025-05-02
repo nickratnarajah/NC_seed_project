@@ -67,4 +67,26 @@ const handleCustomErrors = (err, req, res, next) => {
   }
 };
 
-  module.exports = { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound, checkNewVotesValid, checkValidParams } 
+const checkArticleValid = (newArticle) => {
+  const requiredFields = {
+    author: "author",
+    title: "title",
+    body: "body",
+    topic: "topic",
+    article_img_url: "image url"
+  };
+
+  for (const [field, name] of Object.entries(requiredFields)) {
+    if (!newArticle[field]) {
+      return Promise.reject({
+        status: 400,
+        msg: `New article must have ${name}`
+      });
+    }
+  }
+
+  return Promise.resolve();
+};
+
+
+  module.exports = { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound, checkNewVotesValid, checkValidParams, checkArticleValid } 
