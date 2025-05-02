@@ -431,3 +431,38 @@ describe("GET /api/articles", () => {
     })
   })
  })
+ describe("GET /api/articles?topic=:topic", () => {
+  test("200: responds with articles filtered by the specified topic", () => {
+    return request(app)
+    .get("/api/articles?topic=mitch")
+    .expect(200)
+    .then(({body: { articles }}) => {
+      expect(Array.isArray(articles)).toBe(true)
+      articles.forEach((article) => {
+        expect(article.topic).toBe("mitch")
+      })
+    })
+  })
+  //error handling for topic filtering
+  test("400: responds with error message if invalid topic", () => {
+    return request(app)
+    .get("/api/articles?topic=mitchh")
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Invalid sort query")
+    })
+  })
+  test("200: works with topic query and sort_by query", () => {
+    return request(app)
+    .get("/api/articles?topic=mitch&sort_by=author&order=asc")
+    .expect(200)
+    .then(({body: { articles }}) => {
+      expect(Array.isArray(articles)).toBe(true)
+      articles.forEach((article) => {
+        expect(article.topic).toBe("mitch")
+        expect(articles).toBeSortedBy("author", { ascending: true })
+      })
+    })
+  })
+ })
+
