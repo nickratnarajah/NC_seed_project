@@ -36,7 +36,6 @@ const handleCustomErrors = (err, req, res, next) => {
   };
   
   const checkNewVotesValid = (newVotes) => {
-    console.log(newVotes, "<<< in checkValid")
     if (!newVotes.inc_votes) {
       return Promise.reject({ status: 400, msg: "Invalid request" });
     }
