@@ -60,7 +60,7 @@ describe("GET /api/articles/:article_id", () => {
       expect(Array.isArray(articles)).toBe(true)
     })
   })
-  test("200: responds with an article object with the correct properties", () => {
+  test("200: responds with an article object with the correct properties, INC comment_count PER UPDATE 12", () => {
     return request(app)
     .get("/api/articles/1")
     .expect(200)
@@ -73,6 +73,7 @@ describe("GET /api/articles/:article_id", () => {
       expect(article).toHaveProperty("created_at");
       expect(article).toHaveProperty("votes");
       expect(article).toHaveProperty("article_img_url");
+      expect(article).toHaveProperty("comment_count");
       expect(typeof article.author).toBe("string");
       expect(typeof article.title).toBe("string");
       expect(typeof article.article_id).toBe("number");
@@ -81,6 +82,7 @@ describe("GET /api/articles/:article_id", () => {
       expect(typeof article.created_at).toBe("string");
       expect(typeof article.votes).toBe("number");
       expect(typeof article.article_img_url).toBe("string");
+      expect(typeof article.comment_count).toBe("number");
     })
   })
   //article id is invalid type
