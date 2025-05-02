@@ -490,4 +490,48 @@ describe("GET /api/articles", () => {
     })
   })
  })
+describe("PATCH /api/comments/:comment_id", () => {
+  test("200: returns an updated comment with the new votes as passed in the new votes object", () => {
+    const newVote = {
+      inc_votes: 10
+    }
+    return request(app)
+    .patch("/api/comments/1")
+    .send(newVote)
+    .expect(200)
+    .then(({body: { comment }}) => {
+      expect(comment).toHaveProperty("author")
+      expect(comment).toHaveProperty("body")
+      expect(comment).toHaveProperty("votes")
+      expect(typeof comment.author).toBe("string")
+      expect(typeof comment.body).toBe("string")
+      expect(typeof comment.votes).toBe("number")
+    })
+  })
+  test("404: responds with error message if invalid article_id", () => {
+    const newVote = {
+      inc_votes: 10
+    }
+    return request(app)
+    .patch("/api/comments/1000")
+    .send(newVote)
+    .expect(404)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Comment not found")
+    })
+  })
+  test("400: responds with error message if inc_votes = NaN", () => {
+    const newVote = {
+      inc_votes: "anything other than a number"
+    }
+    return request(app)
+    .patch("/api/comments/1")
+    .send(newVote)
+    .expect(400)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("New Votes must be a number")
+    })
+  })
+ })
+
 

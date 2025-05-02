@@ -152,9 +152,22 @@ const selectUsername = (username) => {
     )
     .then((result) => {
         const user = result.rows[0]
-        console.log(user, "<<< return of model")
         return user
     })
 }
 
-module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers, selectUsername }
+const updateCommentVotes = (commentId, newVotes) => {
+    return db.query(
+        `UPDATE comments
+        SET votes = votes + $1
+        WHERE comment_id = $2
+        RETURNING *`,
+        [newVotes.inc_votes, commentId]
+    )
+    .then((result) => {
+        const comment = result.rows[0]
+        return comment
+    })
+}
+
+module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers, selectUsername, updateCommentVotes }
