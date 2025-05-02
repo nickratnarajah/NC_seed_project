@@ -18,8 +18,9 @@ getTopics = (req, res, next) => {
 getArticles = (req, res, next) => {
     const sortBy = req.query.sort_by
     const order = req.query.order
+    const topic = req.query.topic
     return checkValidParams(req.query)
-    .then(() => {return selectArticles(sortBy, order).then((articles) => {
+    .then(() => {return selectArticles(sortBy, order, topic).then((articles) => {
         res.status(200).send({ articles })
     })
     })

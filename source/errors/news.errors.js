@@ -50,8 +50,8 @@ const handleCustomErrors = (err, req, res, next) => {
     if (!reqQuery) {
       return Promise.resolve()
     }
-      else {const { sort_by, order } = reqQuery
-    const validParams = ["sort_by", "order"]
+      else {const { sort_by, order, topic } = reqQuery
+    const validParams = ["sort_by", "order", "topic"]
 
     const invalidParams = Object.keys(reqQuery).filter(
       (key) => !validParams.includes(key)
