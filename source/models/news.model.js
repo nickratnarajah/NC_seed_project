@@ -143,4 +143,18 @@ const selectAllUsers = () => {
     })
 }
 
-module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers }
+const selectUsername = (username) => {
+    return db.query(
+        `SELECT username, avatar_url, name
+        FROM users
+        WHERE username = $1`,
+        [username]
+    )
+    .then((result) => {
+        const user = result.rows[0]
+        console.log(user, "<<< return of model")
+        return user
+    })
+}
+
+module.exports = { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers, selectUsername }

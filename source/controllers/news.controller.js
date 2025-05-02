@@ -1,4 +1,4 @@
-const { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers } = require('../models/news.model');
+const { selectEndpoints, selectTopics, selectArticles, selectArticleById, selectArticleComments, checkArticleExists, insertNewComment, updateArticleVotes, deleteComment, checkCommentExists, selectAllUsers, selectUsername, checkUsernameExists } = require('../models/news.model');
 const { checkNewVotesValid, checkValidParams } = require('../errors/news.errors')
 
 getEndpoints = (req, res, next) => {
@@ -95,4 +95,15 @@ getAllUsers = (req, res, next) => {
     })
 }
 
-module.exports = { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment, patchArticleVotes, deleteCommentById, getAllUsers }
+getUserByUsername = (req, res, next) => {
+    const username = req.params.username
+    return selectUsername(username)
+    .then((user) => {
+        if (!user) {
+            return Promise.reject({ status: 404, msg: "User not found"})
+        }
+        res.status(200).send({ user })
+    })
+}
+
+module.exports = { getEndpoints, getTopics, getArticles, getArticleById, getArticleComments, postNewComment, patchArticleVotes, deleteCommentById, getAllUsers, getUserByUsername }

@@ -67,5 +67,4 @@ const handleCustomErrors = (err, req, res, next) => {
   }
 };
 
-
   module.exports = { handleCustomErrors, handlePsqlErrors, handleServerErrors, handlePathNotFound, checkNewVotesValid, checkValidParams } 
