@@ -14,14 +14,14 @@ return db.query('SELECT * FROM topics')
 })
 }
 
-const selectArticles = (sortBy, order, topic) => {
+const selectArticles = (sortBy, order, topic, limit, page) => {
     //Define initial strings for use in query later
     let baseString = "SELECT articles.author, articles.title, articles.article_id, articles.topic, articles.created_at, articles.votes, articles.article_img_url, COUNT (comments.comment_id) ::int AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id"
     let groupString = " GROUP BY articles.article_id"
     let defaultSort = "ORDER BY articles.created_at"
     let defaultOrder = "DESC"
     
-    //Greenlist paramaters
+    //Greenlist parameters
     const allowedSortBy = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'comment_count']
     const allowedOrder = ['asc', 'desc']
     const allowedTopics = ['mitch', 'cats']
@@ -42,22 +42,56 @@ const selectArticles = (sortBy, order, topic) => {
     //Logic for handling the topic query
     let queryValues = []
     if (topic) {queryValues.push(topic);
-        baseString += ` WHERE articles.topic = $1`
+        topicSuffix = ` WHERE articles.topic = $1`
+        baseString += topicSuffix
     }
 
+    //logic for handling limit
+    let defaultLimit = 10
+    if (limit) {defaultLimit = limit}
+    queryValues.push(defaultLimit)
+
+    //logic for handling pagination
+    let defaultPage = 1
+    if (page) {defaultPage = page}
+    const offset = (defaultPage - 1) * defaultLimit
+    queryValues.push(offset)
+
+    
+    const limitString = `LIMIT $${queryValues.length-1} OFFSET $${queryValues.length}`
+    
     //Readding the group by string to ensure the join works correctly accounting for the topic selection
     baseString += groupString
-
+    
     //Reassemble the final query string
-    const queryString = `${baseString} ${defaultSort} ${defaultOrder}`
-
-
-        return db.query(queryString, queryValues)
-    .then((result) => {
-        const articles = result.rows
-        return articles
-    })
-}
+    const queryString = `${baseString} ${defaultSort} ${defaultOrder} ${limitString}`
+    
+    //Retrieve pagination metadata for response
+    let countQuery = `SELECT COUNT(*)::INT AS total_count FROM articles`
+    if (topic) {countQuery += topicSuffix}
+    const countValues = topic ? [topic] : [];
+    
+    
+     
+    return Promise.all([
+        db.query(countQuery, countValues),
+        db.query(queryString, queryValues)
+    ])
+    .then(([countResult, articlesResult]) => {
+        const total_count = countResult.rows[0].total_count;
+        const totalPages = Math.ceil(total_count / defaultLimit);
+      
+        if (defaultPage > totalPages && total_count !== 0) {
+          return Promise.reject({ status: 404, msg: "Page not found" });
+        }
+      
+        return {
+          total_count,
+          page: defaultPage,
+          articles: articlesResult.rows
+        };
+      })
+    }
 
 const selectArticleById = (articleId) => {
     return db.query(`

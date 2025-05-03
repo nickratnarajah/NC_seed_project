@@ -19,9 +19,12 @@ getArticles = (req, res, next) => {
     const sortBy = req.query.sort_by
     const order = req.query.order
     const topic = req.query.topic
+    const limit = req.query.limit
+    const page = req.query.p
     return checkValidParams(req.query)
-    .then(() => {return selectArticles(sortBy, order, topic).then((articles) => {
-        res.status(200).send({ articles })
+    .then(() => {return selectArticles(sortBy, order, topic, limit, page).then((data) => {
+        res.status(200).send(data)
+        console.log(data)
     })
     })
     .catch(next)

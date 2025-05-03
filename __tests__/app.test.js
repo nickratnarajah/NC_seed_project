@@ -165,6 +165,40 @@ describe("GET /api/articles", () => {
       expect(msg).toBe("Path not found")
     })
   })
+    test("200: limits the number of responses defaulting to 10", () => {
+    return request(app)
+    .get("/api/articles")
+    .expect(200)
+    .then(({body: { articles }}) => {
+      expect(articles.length).toBe(10)
+    })
+  })
+  test("200: accepts limit query which limits the number of responses", () => {
+    return request(app)
+    .get("/api/articles?limit=5")
+    .expect(200)
+    .then(({body: { articles }}) => {
+      expect(articles.length).toBe(5)
+    })
+  })
+  test("200: accepts page query which defaults to page 1", () => {
+    return request(app)
+    .get("/api/articles?limit=2&p=4")
+    .expect(200)
+    .then(({body: { articles }}) => {
+      expect(articles.length).toBe(2)
+      expect(articles).toBeSortedBy("created_at", { descending: true })
+      expect(articles[0].article_id).toBe(1)
+    })
+  })
+  test("404: error message when user sets page to out of range", () => {
+    return request(app)
+    .get("/api/articles?limit=10&p=4")
+    .expect(404)
+    .then(({body: { msg }}) => {
+      expect(msg).toBe("Page not found")
+    })
+  })
  })
 
  describe("GET /api/articles/:article_id/comments", () => {
