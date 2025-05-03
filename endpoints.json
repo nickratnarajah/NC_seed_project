@@ -10,8 +10,10 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles, sorted in descending order by creation date",
+    "description": "serves an array of all articles, sorted in descending order by creation date. UPDATE TASK 19 - accepts page limit and page number, defaulting to 10 and 1",
     "exampleResponse": {
+      "total_count": 100,
+      "page_number": 1,
       "articles": [
         {
           "title": "Seafood substitutions are increasing",
