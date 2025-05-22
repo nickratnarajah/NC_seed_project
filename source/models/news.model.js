@@ -24,7 +24,7 @@ const selectArticles = (sortBy, order, topic, limit, page) => {
     //Greenlist parameters
     const allowedSortBy = ['article_id', 'title', 'topic', 'author', 'created_at', 'votes', 'comment_count']
     const allowedOrder = ['asc', 'desc']
-    const allowedTopics = ['mitch', 'cats']
+    const allowedTopics = ['coding', 'football', 'cooking', 'mitch', 'cats']
 
 
     //I'm aware the checking for valid sort and order might violate DRY but the thinking was to practice making airtight against SQL injection
